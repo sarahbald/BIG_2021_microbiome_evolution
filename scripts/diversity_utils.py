@@ -15,6 +15,8 @@ import stats_utils
 import os.path
 import sfs_utils
 
+import parse_africa_data
+
 from scipy.misc import factorial
 
 import math
@@ -751,6 +753,7 @@ upper_threshold=config.consensus_upper_threshold):
             passed_sites = passed_sites_map[gene_name][variant_type]['sites']
 
             allele_counts = allele_counts_map[gene_name][variant_type]['alleles']
+
             if len(allele_counts)==0:
                 continue
 
@@ -772,7 +775,12 @@ upper_threshold=config.consensus_upper_threshold):
             #print confident_sites.shape
 
             # goes from L x n to L x h (sites across all hosts)
+
+            #print(confident_sites)
+
             host_confident_sites = (numpy.einsum('ij,jk', confident_sites, sample_host_matrix)>0.5)
+
+            #print(host_confident_sites)
 
             host_derived_sites = (numpy.einsum('ij,jk',derived_sites, sample_host_matrix)>0.5)
 

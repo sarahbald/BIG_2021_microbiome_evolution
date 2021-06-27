@@ -4,6 +4,7 @@ import parse_midas_data
 import config
 from collections import defaultdict
 import os
+import parse_africa_data
 
 ###############################################################################
 #
@@ -952,71 +953,69 @@ def calculate_triple_samples(sample_order_map, sample_list=[]):
 ###############################################################################
 def calculate_sample_subject_matrix(samples):
 
-    sample_idx_map = {samples[i]:i for i in xrange(0,len(samples))}
+	sample_idx_map = {samples[i]:i for i in xrange(0,len(samples))}
 
-    subject_sample_map = parse_subject_sample_map()
-    subjects = subject_sample_map.keys()
+	#subject_sample_map = parse_subject_sample_map()
+	subject_sample_map = parse_africa_data.parse_subject_sample_map()
+	subjects = subject_sample_map.keys()
 
-    sample_subject_matrix = numpy.zeros((len(samples),len(subjects)),dtype=numpy.bool)
+	sample_subject_matrix = numpy.zeros((len(samples),len(subjects)),dtype=numpy.bool)
 
-    for subject_idx in xrange(0,len(subjects)):
-        for sample in subject_sample_map[subjects[subject_idx]]:
-            if sample in sample_idx_map:
-                sample_subject_matrix[sample_idx_map[sample], subject_idx] = True
+	for subject_idx in xrange(0,len(subjects)):
+		#for sample in subject_sample_map[subjects[subject_idx]]:
+		for sample in subject_sample_map[subjects[subject_idx]][subjects[subject_idx]]:
+			if sample in sample_idx_map:
+				sample_subject_matrix[sample_idx_map[sample], subject_idx] = True
 
-    return sample_subject_matrix, subjects
+	return sample_subject_matrix, subjects
 
+	same_sample_idx_lower = []
+	same_sample_idx_upper = []
+	same_subject_idx_lower = []
+	same_subject_idx_upper = []
+	diff_subject_idx_lower = []
+	diff_subject_idx_upper = []
 
+	for i in xrange(0,len(sample_list)):
+		for j in xrange(i,len(sample_list)):
+			# loop over all pairs of samples
 
+			if i==j:
+				same_sample_idx_lower.append(i)
+				same_sample_idx_upper.append(j)
+			else:
 
+				subject1, order1 = sample_order_map[sample_list[i]]
+				subject2, order2 = sample_order_map[sample_list[j]]
 
-    same_sample_idx_lower = []
-    same_sample_idx_upper = []
-    same_subject_idx_lower = []
-    same_subject_idx_upper = []
-    diff_subject_idx_lower = []
-    diff_subject_idx_upper = []
+				if subject1==subject2:
+					# same subject!
+					if order2-order1==1:
+						# consecutive samples
+						same_subject_idx_lower.append(i)
+						same_subject_idx_upper.append(j)
+					elif order1-order2==1:
+						# consecutive samples
+						same_subject_idx_lower.append(j)
+						same_subject_idx_upper.append(i)
+					else:
+						# do not add
+						pass
 
-    for i in xrange(0,len(sample_list)):
-        for j in xrange(i,len(sample_list)):
-            # loop over all pairs of samples
+				else:
+					# different subjects!
+					# Only take first one (to prevent multiple comparisons)
+					if order1==1 and order2==1:
+						diff_subject_idx_lower.append(i)
+						diff_subject_idx_upper.append(j)
 
-            if i==j:
-                same_sample_idx_lower.append(i)
-                same_sample_idx_upper.append(j)
-            else:
+	same_sample_idxs = (numpy.array(same_sample_idx_lower,dtype=numpy.int32), numpy.array(same_sample_idx_upper,dtype=numpy.int32))
 
-                subject1, order1 = sample_order_map[sample_list[i]]
-                subject2, order2 = sample_order_map[sample_list[j]]
+	same_subject_idxs = (numpy.array(same_subject_idx_lower,dtype=numpy.int32), numpy.array(same_subject_idx_upper,dtype=numpy.int32))
 
-                if subject1==subject2:
-                    # same subject!
-                    if order2-order1==1:
-                        # consecutive samples
-                        same_subject_idx_lower.append(i)
-                        same_subject_idx_upper.append(j)
-                    elif order1-order2==1:
-                        # consecutive samples
-                        same_subject_idx_lower.append(j)
-                        same_subject_idx_upper.append(i)
-                    else:
-                        # do not add
-                        pass
+	diff_subject_idxs = (numpy.array(diff_subject_idx_lower,dtype=numpy.int32), numpy.array(diff_subject_idx_upper,dtype=numpy.int32))
 
-                else:
-                    # different subjects!
-                    # Only take first one (to prevent multiple comparisons)
-                    if order1==1 and order2==1:
-                        diff_subject_idx_lower.append(i)
-                        diff_subject_idx_upper.append(j)
-
-    same_sample_idxs = (numpy.array(same_sample_idx_lower,dtype=numpy.int32), numpy.array(same_sample_idx_upper,dtype=numpy.int32))
-
-    same_subject_idxs = (numpy.array(same_subject_idx_lower,dtype=numpy.int32), numpy.array(same_subject_idx_upper,dtype=numpy.int32))
-
-    diff_subject_idxs = (numpy.array(diff_subject_idx_lower,dtype=numpy.int32), numpy.array(diff_subject_idx_upper,dtype=numpy.int32))
-
-    return same_sample_idxs, same_subject_idxs, diff_subject_idxs
+	return same_sample_idxs, same_subject_idxs, diff_subject_idxs
 
 ###############################################################################
 #

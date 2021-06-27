@@ -113,9 +113,11 @@ if __name__=='__main__':
             snp_samples = dummy_samples
             sys.stderr.write("Done! Loaded %d genes\n" % len(allele_counts_map.keys()))
 
+
             chunk_private_snvs = diversity_utils.calculate_private_snvs(snp_samples, allele_counts_map, passed_sites_map)
 
             private_snvs.extend(chunk_private_snvs)
+
 
         if len(private_snvs)>0:
 

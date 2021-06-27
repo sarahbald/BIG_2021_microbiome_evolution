@@ -94,7 +94,10 @@ if __name__=='__main__':
         # Only plot samples above a certain depth threshold that are "haploids"
         snp_samples = diversity_utils.calculate_haploid_samples(species_name, debug=debug)
         # Only consider one sample per person
-        snp_samples =     snp_samples[parse_midas_data.calculate_unique_samples(subject_sample_map, sample_list=snp_samples)]
+        #print(snp_samples)
+        #print(subject_sample_map)
+        # we know there's one sample
+        #snp_samples =     snp_samples[parse_midas_data.calculate_unique_samples(subject_sample_map, sample_list=snp_samples)]
         sys.stderr.write("Proceeding with %d haploid samples!\n" % len(snp_samples))
 
         if len(snp_samples) < min_sample_size:
