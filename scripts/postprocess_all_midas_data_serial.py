@@ -14,7 +14,7 @@ else:
 
 
 # First calculate core genes for each species
-#os.system('python core_gene_utils.py')
+os.system('python core_gene_utils.py')
 
 # Call postprocess_midas_data.py for each species
 os.system('python %sloop_over_species_wrapper.py %s python %spostprocess_midas_data.py' % (parse_midas_data.scripts_directory, argument, parse_midas_data.scripts_directory))

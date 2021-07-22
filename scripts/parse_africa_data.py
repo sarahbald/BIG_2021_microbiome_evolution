@@ -54,6 +54,7 @@ def parse_sample_metadata_map():
 
         sample_metadata_map[sample_id] = (subject_id, sample_id, accession_id, country, continent, order)
 
+
     file.close()
 
 

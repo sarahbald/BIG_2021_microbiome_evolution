@@ -1,7 +1,8 @@
 import sample_utils
 import config
 import parse_midas_data
-import parse_africa_data
+#import parse_africa_data
+import parse_HMP_data
 import os.path
 #import pylab
 import sys
@@ -142,7 +143,7 @@ if __name__=='__main__':
 
     # Load subject and sample metadata
     sys.stderr.write("Loading sample metadata...\n")
-    subject_sample_map = parse_africa_data.parse_subject_sample_map()
+    subject_sample_map = parse_HMP_data.parse_subject_sample_map()
     sys.stderr.write("Done!\n")
 
     # header for the output file.

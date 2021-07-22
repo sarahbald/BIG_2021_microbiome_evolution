@@ -6,7 +6,7 @@
 #$ -r y
 #$ -j y
 #$ -l time=120:00:00
-#$ -l h_data=34G
+#$ -l h_data=60G
 #$ -l highp
 
 
@@ -23,8 +23,11 @@ export PYTHONPATH=$PYTHONPATH:/u/project/ngarud/Garud_lab/MIDAS_mod
 export PATH=$PATH:/u/project/ngarud/Garud_lab/MIDAS_mod/scripts
 export MIDAS_DB=/u/project/ngarud/Garud_lab/midas_db_v1.2
 
+midas_output_paths=/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/scripts/midas_output_paths.txt
 
 
-OUTDIR=/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/data/
+OUTDIR=/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/data
 
-merge_midas.py genes $OUTDIR/genes -i $OUTDIR/midas_output_v1.2.1 -t dir --sample_depth 10 --min_samples 1 --max_species 150 >& $OUTDIR/genes.log
+#merge_midas.py genes $OUTDIR/genes -i $OUTDIR/midas_output_v1.2.1 -t dir --sample_depth 10 --min_samples 1 --max_species 150 >& $OUTDIR/genes.log
+
+merge_midas.py genes $OUTDIR/genes_test -i $midas_output_paths -t file --sample_depth 10 --min_samples 1 --max_species 150 >& $OUTDIR/genes.log
