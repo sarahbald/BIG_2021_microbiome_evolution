@@ -90,9 +90,6 @@ export MIDAS_DB=/u/project/ngarud/Garud_lab/midas_db_v1.2
 
 
 
-
-
-
 # run core genes first:
 #python /u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/scripts/core_gene_utils.py
 
@@ -105,7 +102,6 @@ export MIDAS_DB=/u/project/ngarud/Garud_lab/midas_db_v1.2
 #python /u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/scripts/print_good_species_list.py name> /u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/data/tmp_intermediate_files/tmp_species_list.txt
 
 #qsub /u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/scripts/scripts/qsub_scripts/run_postprocessing_scripts
-
 
 
 python /u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/scripts/postprocess_all_midas_data_serial.py

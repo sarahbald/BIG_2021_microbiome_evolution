@@ -4,7 +4,7 @@ import parse_midas_data
 import config
 from collections import defaultdict
 import os
-import parse_africa_data
+#import parse_africa_data
 
 ###############################################################################
 #
@@ -196,6 +196,56 @@ def parse_sample_metadata_map(fecal_only = False, good_tp_only = False):
 				order = int(timept) # In days since birth
 				if accession_id in olm_samples: # Restrict to considered samples
 					sample_metadata_map[sample_id] = (subject_id, sample_id, accession_id, 'United States', 'North America', order)
+
+
+	# First load Ethiopia metadata
+	#file = open(config.scripts_directory+"HMP_ids_order.txt","r")
+	file = open(config.scripts_directory+"PRJNA504891_run_accessions.txt","r")
+	file.readline() # header
+	for line_idx, line in enumerate(file):
+		items = line.split("\t")
+		#sample_id = items[0].strip()
+		#accession_id = items[1].strip()
+
+		sample_id = items[1].strip()
+		accession_id = items[0].strip()
+
+		# one sample per subject
+		#subject_id = sample_id
+		subject_id = 'PRJNA504891_subject_%d' % (line_idx +1)
+		country = "Ethiopia"
+		continent = "Africa"
+		order = 1
+
+		sample_metadata_map[sample_id] = (subject_id, sample_id, accession_id, country, continent, order)
+
+
+	file.close()
+
+
+	# load Madagascar metadata
+	file = open(config.scripts_directory+"PRJNA485056_run_accessions.txt","r")
+	file.readline() # header
+	for line_idx, line in enumerate(file):
+		items = line.split("\t")
+		#sample_id = items[0].strip()
+		#accession_id = items[1].strip()
+
+		sample_id = items[1].strip()
+		accession_id = items[0].strip()
+
+		# one sample per subject
+		#subject_id = sample_id
+		subject_id = 'PRJNA485056_subject_%d' % (line_idx +1)
+		country = "Madagascar"
+		continent = "Africa"
+		order = 1
+
+		sample_metadata_map[sample_id] = (subject_id, sample_id, accession_id, country, continent, order)
+
+	file.close()
+
+
 
 	return sample_metadata_map
 
@@ -524,22 +574,51 @@ def sample_name_lookup(sample_name, samples):
 # Returns len(sampe_list) boolean array with element=False if sample was pruned
 #
 ###############################################################################
+
+
 def calculate_unique_samples(subject_sample_map, sample_list=[]):
 
     if len(sample_list)==0:
         sample_list = list(sorted(flatten_samples(subject_sample_map).keys()))
 
     # invert subject sample map
-    #sample_subject_map = {}
-    #for subject in subject_sample_map.keys():
-    #    for sample in subject_sample_map[subject].keys():
-    #        sample_subject_map[sample] = subject
+    sample_subject_map = {}
+    for subject in subject_sample_map.keys():
+        for sample in subject_sample_map[subject].keys():
+            sample_subject_map[sample] = subject
+
+    subject_idx_map = {}
+
+    for i in xrange(0,len(sample_list)):
+        sample = sample_list[i]
+        if sample.endswith('c'):
+            sample = sample[:-1]
+        subject = sample_subject_map[sample]
+        if not subject in subject_idx_map:
+            subject_idx_map[subject] = i
+
+    unique_idxs = numpy.zeros(len(sample_list),dtype=numpy.bool_)
+    for i in subject_idx_map.values():
+        unique_idxs[i]=True
+
+    return unique_idxs
+
+def calculate_unique_sample_test(subject_sample_map, sample_list=[]):
+
+    if len(sample_list)==0:
+        sample_list = list(sorted(flatten_samples(subject_sample_map).keys()))
+
+    # invert subject sample map
+    sample_subject_map = {}
+    for subject in subject_sample_map.keys():
+        for sample in subject_sample_map[subject].keys():
+            sample_subject_map[sample] = subject
 
 
-	sample_subject_map = {}
-	for subject in subject_sample_map.keys():
-		for sample in list(subject_sample_map[subject].values()[0]):
-			sample_subject_map[sample] = subject
+	#sample_subject_map = {}
+	#for subject in subject_sample_map.keys():
+	#	for sample in list(subject_sample_map[subject].values()[0]):
+	#		sample_subject_map[sample] = subject
 
 	subject_idx_map = {}
 
@@ -633,15 +712,19 @@ def calculate_subject_pairs(subject_sample_map, sample_list=[]):
 
 	sample_list = new_sample_list
 
+	##### original function
     # invert subject sample map
-    #sample_subject_map = {}
-    #for subject in subject_sample_map.keys():
-    #    for sample in subject_sample_map[subject].keys():
-    #        sample_subject_map[sample] = subject
 	sample_subject_map = {}
 	for subject in subject_sample_map.keys():
-		for sample in list(subject_sample_map[subject].values()[0]):
+		for sample in subject_sample_map[subject].keys():
 			sample_subject_map[sample] = subject
+
+	#sample_continent_map = parse_HMP_data.parse_sample_continent_map()
+
+	#sample_subject_map = {}
+	#for subject in subject_sample_map.keys():
+	#	for sample in list(subject_sample_map[subject].values()[0]):
+	#		sample_subject_map[sample] = subject
 
 	same_sample_idx_lower = []
 	same_sample_idx_upper = []
@@ -956,14 +1039,13 @@ def calculate_sample_subject_matrix(samples):
 	sample_idx_map = {samples[i]:i for i in xrange(0,len(samples))}
 
 	#subject_sample_map = parse_subject_sample_map()
-	subject_sample_map = parse_africa_data.parse_subject_sample_map()
+	subject_sample_map = parse_HMP_data.parse_subject_sample_map()
 	subjects = subject_sample_map.keys()
 
 	sample_subject_matrix = numpy.zeros((len(samples),len(subjects)),dtype=numpy.bool)
 
 	for subject_idx in xrange(0,len(subjects)):
-		#for sample in subject_sample_map[subjects[subject_idx]]:
-		for sample in subject_sample_map[subjects[subject_idx]][subjects[subject_idx]]:
+		for sample in subject_sample_map[subjects[subject_idx]]:
 			if sample in sample_idx_map:
 				sample_subject_matrix[sample_idx_map[sample], subject_idx] = True
 

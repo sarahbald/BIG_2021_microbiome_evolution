@@ -15,7 +15,8 @@ import stats_utils
 import os.path
 import sfs_utils
 
-import parse_africa_data
+#import parse_africa_data
+
 
 from scipy.misc import factorial
 

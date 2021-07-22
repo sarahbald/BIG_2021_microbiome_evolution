@@ -124,7 +124,57 @@ def parse_sample_metadata_map():
 
     file.close()
 
+
+    # First load Ethiopia metadata
+    #file = open(config.scripts_directory+"HMP_ids_order.txt","r")
+    file = open(config.scripts_directory+"PRJNA504891_run_accessions.txt","r")
+    file.readline() # header
+    for line_idx, line in enumerate(file):
+        items = line.split("\t")
+        #sample_id = items[0].strip()
+        #accession_id = items[1].strip()
+
+        sample_id = items[1].strip()
+        accession_id = items[0].strip()
+
+        # one sample per subject
+        #subject_id = sample_id
+        subject_id = 'PRJNA504891_subject_%d' % (line_idx +1)
+        country = "Ethiopia"
+        continent = "Africa"
+        order = 1
+
+        sample_metadata_map[sample_id] = (subject_id, sample_id, accession_id, country, continent, order)
+
+
+    file.close()
+
+
+    # load Madagascar metadata
+    file = open(config.scripts_directory+"PRJNA485056_run_accessions.txt","r")
+    file.readline() # header
+    for line_idx, line in enumerate(file):
+        items = line.split("\t")
+        #sample_id = items[0].strip()
+        #accession_id = items[1].strip()
+
+        sample_id = items[1].strip()
+        accession_id = items[0].strip()
+
+        # one sample per subject
+        #subject_id = sample_id
+        subject_id = 'PRJNA485056_subject_%d' % (line_idx +1)
+        country = "Madagascar"
+        continent = "Africa"
+        order = 1
+
+        sample_metadata_map[sample_id] = (subject_id, sample_id, accession_id, country, continent, order)
+
+    file.close()
+
     return sample_metadata_map
+
+
 
 def filter_sample_metadata_map(sample_metadata_map, field, field_value):
 

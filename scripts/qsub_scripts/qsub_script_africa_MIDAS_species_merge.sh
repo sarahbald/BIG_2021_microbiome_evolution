@@ -24,8 +24,13 @@ export PATH=$PATH:/u/project/ngarud/Garud_lab/MIDAS_mod/scripts
 export MIDAS_DB=/u/project/ngarud/Garud_lab/midas_db_v1.2
 
 
+midas_output_paths=/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/scripts/midas_output_paths.txt
 
-OUTDIR=/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/data/
+
+OUTDIR=/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/data
 
 # -t = directory containing all samples
-merge_midas.py species $OUTDIR/species -i $OUTDIR/midas_output_v1.2.1 -t dir  >& $OUTDIR/species.log
+#merge_midas.py species $OUTDIR/species -i $OUTDIR/midas_output_v1.2.1 -t dir  >& $OUTDIR/species.log
+
+
+merge_midas.py species $OUTDIR/species_test -i $midas_output_paths -t file  >& $OUTDIR/species_test.log
