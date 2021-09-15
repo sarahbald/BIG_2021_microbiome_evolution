@@ -14,6 +14,7 @@ if os.geteuid() == 501:
 
     midas_directory = os.path.expanduser("~/GitHub/BIG_2021_microbiome_evolution/data/midas_db_v1.2/")
 
+    #patric_directory = os.path.expanduser("~/GitHub/BIG_2021_microbiome_evolution/data/patric_db/")
     patric_directory = os.path.expanduser("~/GitHub/BIG_2021_microbiome_evolution/data/patric_db/")
 
     metadata_directory = os.path.expanduser("~/GitHub/BIG_2021_microbiome_evolution/scripts/metadata/")
@@ -28,7 +29,9 @@ else:
 
     midas_directory = os.path.expanduser("/u/project/ngarud/Garud_lab/midas_db_v1.2/")
     #patric_directory = os.path.expanduser("/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/data/patric_db/")
-    patric_directory = os.path.expanduser("/u/project/ngarud/Garud_lab/PATRIC/")
+    #patric_directory = os.path.expanduser("/u/project/ngarud/Garud_lab/PATRIC/")
+    patric_directory = os.path.expanduser("/u/project/ngarud/Garud_lab/software/PATRIC/")
+    
 
     metadata_directory = os.path.expanduser("/u/project/ngarud/Garud_lab/BIG_2021_microbiome_evolution/scripts/metadata/")
 
