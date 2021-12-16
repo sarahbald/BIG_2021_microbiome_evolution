@@ -8,6 +8,7 @@ import os
 from math import log10
 
 if os.geteuid() == 501:
+
     data_directory = os.path.expanduser("~/GitHub/BIG_2021_microbiome_evolution/data/")
     analysis_directory = os.path.expanduser("~/GitHub/BIG_2021_microbiome_evolution/analysis/")
     scripts_directory = os.path.expanduser("~/GitHub/BIG_2021_microbiome_evolution/scripts/")

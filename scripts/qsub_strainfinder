@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#$ -N P_copri
+#$ -e /u/project/ngarud/sarahbal/BIG_2021_microbiome_evolution/strainfinder_output/Prevotella_copri_61740/$TASK_ID
+#$ -o /u/project/ngarud/sarahbal/BIG_2021_microbiome_evolution/strainfinder_output/Prevotella_copri_61740/$TASK_ID
+#$ -cwd
+#$ -r y
+#$ -j y
+#$ -l time=48:00:00
+#$ -l h_data=12G
+#$ -l highp
+#$ -t 1-177
+
+SPECIES="Prevotella_copri_61740"
+SAMPLE=$(sed "${SGE_TASK_ID}q;d" "sample_names/${SPECIES}.txt")
+
+. /u/local/Modules/default/init/modules.sh
+
+module unload python
+module load anaconda2/2019.10
+source activate midas
+pip install scipy
+pip install openopt
+pip install FuncDesigner
+pip install DerApproximator
+
+python /u/project/ngarud/sarahbal/BIG_2021_microbiome_evolution/scripts/create_StrainFinderInput.py --species ${SPECIES} --sample ${SAMPLE} --outdir /u/project/ngarud/sarahbal/BIG_2021_microbiome_evolution/strainfinder_output/
+
+python /u/project/ngarud/sarahbal/BIG_2021_microbiome_evolution/scripts/run_strainfinder.py ${SPECIES} ${SAMPLE}
+
+python /u/project/ngarud/sarahbal/BIG_2021_microbiome_evolution/scripts/postprocess_strainfinder_output.py ${SPECIES} ${SAMPLE}
+
+
+
+

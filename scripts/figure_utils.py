@@ -17,3 +17,4 @@ def get_abbreviated_species_name(species_name):
     pretty_name = "%s. %s" % (items[0][0], items[1])
         
     return pretty_name
+
