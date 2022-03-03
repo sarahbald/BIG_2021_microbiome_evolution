@@ -4,11 +4,16 @@ import numpy
 import sympy as sp
 import scipy
 import matplotlib.pyplot as plt
+import pickle
 
 
 
-import calculate_species_relative_abundance
-mean_abundance_dict = calculate_species_relative_abundance.load_species_mean_abun_dict()
+#import calculate_species_relative_abundance
+data_directory = "C:/Users/sarah/Garud Lab/"
+filename = data_directory+"species_mean_relative_abundance.dat"
+with open(filename, 'rb') as handle:
+        mean_abundance_dict = pickle.load(handle)
+        
 af_abun_all = []
 na_abun_all = []
 for species_abundance in mean_abundance_dict.keys():
@@ -17,7 +22,7 @@ for species_abundance in mean_abundance_dict.keys():
 af_mad = numpy.array(af_abun_all)
 na_mad = numpy.array(na_abun_all)
 
-emp_mad = af_mad
+emp_mad = na_mad
 
 
 # empirical mean abundance distribution
@@ -43,30 +48,33 @@ def Klogn(emp_mad, c, mu0=-19,s0=5):
 #hist_af, bin_edges_af = numpy.histogram(af_mad, density=True, bins=numpy.logspace(-3,-0.5, 25))
 #bins_mean_af = [0.5 * (bin_edges_af[i] + bin_edges_af[i+1]) for i in range(0, len(bin_edges_af)-1 )]
 
-mad_log10 = numpy.log10(emp_mad)
-hist_mad, bin_edges_mad = numpy.histogram(mad_log10, density=True, bins=20)
+mad_log = numpy.log10(emp_mad)
+hist_mad, bin_edges_mad = numpy.histogram(mad_log, density=True, bins=20)
 bins_mean_mad = [0.5 * (bin_edges_mad[i] + bin_edges_mad[i+1]) for i in range(0, len(bin_edges_mad)-1 )]
-prob_to_plot = [sum( (mad_log10>=bin_edges_mad[i]) & (mad_log10<=bin_edges_mad[i+1])  ) / len(mad_log10) for i in range(0, len(bin_edges_mad)-1 )]
-bins_mean_plot = [numpy.exp(bins_mean_mad[i]) for i in range(len(bins_mean_mad))]
+prob_to_plot = [sum( (mad_log>=bin_edges_mad[i]) & (mad_log<=bin_edges_mad[i+1])  ) / len(mad_log) for i in range(0, len(bin_edges_mad)-1 )]
+bins_mean_plot = [10**(bins_mean_mad[i]) for i in range(len(bins_mean_mad))]
 
 # range of abundances to plot
 x=numpy.arange(-14,-1,step=0.1)
 fig, ax = plt.subplots()
 
-ax.scatter(bins_mean_plot, prob_to_plot, alpha=0.5, s=30, label = "North America")
+ax.scatter(bins_mean_plot, prob_to_plot, alpha=0.5, s=30)
 #ax.scatter(bins_mean_af, hist_af, alpha=0.5, s=30, label = "Africa")
-#c_values = [10e-8, 10e-7, 10e-6]
-c_values = [10e-7]
+c_values = [1e-6, 1e-7, 1e-8]
+#c_values = [10e-7]
 #for value in numpy.linspace(numpy.quantile(emp_mad, 0.25), numpy.quantile(emp_mad, 0.5), 5):
 for value in c_values:
     c = value
     (mu,sigma) = Klogn(emp_mad, c)
-    ax.plot(numpy.exp(x), numpy.sqrt(2/math.pi)/sigma *numpy.exp(-(x-mu)**2 /2/(sigma**2))/scipy.special.erfc((numpy.log(c)-mu)/numpy.sqrt(2)/sigma),'-k')
+    ax.plot(numpy.exp(x), numpy.sqrt(2/math.pi)/sigma *numpy.exp(-(x-mu)**2 /2/(sigma**2))/scipy.special.erfc((numpy.log(c)-mu)/numpy.sqrt(2)/sigma), label = c)
 
 #plot truncated lognormal fitted for K>log(c)
 #ax.plot(numpy.log10(numpy.exp(x)),numpy.sqrt(2/math.pi)/sigma *numpy.exp(-(x-mu)**2 /2/(sigma**2))/scipy.special.erfc((numpy.log(c)-mu)/numpy.sqrt(2)/sigma),'-k')
 #ax.plot(numpy.exp(x), numpy.sqrt(2/math.pi)/sigma *numpy.exp(-(x-mu)**2 /2/(sigma**2))/scipy.special.erfc((numpy.log(c)-mu)/numpy.sqrt(2)/sigma),'-k')
 ax.set_xscale('log', basex=10)
+ax.set_xlabel('Mean Abundance Distribution')
 ax.set_yscale('log', basey=10)
-ax.set_xlim(10**(-3.5), 1)
-plt.savefig('C:/Users/sarah/Garud Lab/plots/mad_estimates_na.png', dpi=600)
+ax.set_xlim(10**(-9), 0.5)
+ax.set_ylim(10**(-3), 0.5)
+ax.legend()
+plt.savefig('C:/Users/sarah/Garud Lab/BIG_2021_microbiome_evolution/plots/mad_midas_na.png', dpi=600)

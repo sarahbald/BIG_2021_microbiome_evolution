@@ -1,11 +1,15 @@
-import calculate_species_relative_abundance
+#import calculate_species_relative_abundance
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 from scipy.optimize import fsolve
 from scipy.special import erf
-from seaborn import kdeplot
 
-mean_abundance_dict = calculate_species_relative_abundance.load_species_mean_abun_dict()
+data_directory = "C:/Users/sarah/Garud Lab/"
+
+filename = data_directory+"species_mean_relative_abundance.dat"
+with open(filename, 'rb') as handle:
+        mean_abundance_dict = pickle.load(handle)
 
 af_abun_all = []
 na_abun_all = []
@@ -94,4 +98,4 @@ plt.xlabel("Rescaled Log of Mean Abundances")
 plt.ylabel("Density")
 #axs[0, 0].set_yscale("log")
 plt.legend()
-plt.savefig('C:/Users/sarah/Garud Lab/plots/mad_densityhist.png', dpi=600)
+plt.savefig('C:/Users/sarah/Garud Lab/BIG_2021_microbiome_evolution/plots/mad_densityhist.png', dpi=600)

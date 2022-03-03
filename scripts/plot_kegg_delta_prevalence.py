@@ -1,90 +1,23 @@
 from __future__ import division
 import numpy
-import pickle
+#import pickle
 #import config
 import matplotlib.pyplot as plt
 #import matplotlib.gridspec as gridspec
-
+import gene_prev_utils
 
 import pandas
 
 
 from sklearn.linear_model import LassoCV
-from sklearn.linear_model import LassoLarsCV
+#from sklearn.linear_model import LassoLarsCV
 #from sklearn.linear_model import Lasso
 #from sklearn.linear_model import LinearRegression
 #from sklearn.model_selection import train_test_split
 
 
 
-def load_predicted_prevalence_subsample_dict(want_names=False):
-
-    intermediate_filename = 'C:/Users/sarah/Garud Lab/delta_prevalence_test.dat'
-
-    with open(intermediate_filename, 'rb') as handle:
-#        b = pickle.load(handle, encoding='latin1')
-        b=pickle.load(handle)
-    if want_names == False:
-        return b
-    if want_names == True:
-        return b.keys()
-
-
-
-def get_kegg_matrix(species_name):
-    
-    prevalence_dict = load_predicted_prevalence_subsample_dict()
-    gene_dict = prevalence_dict[species_name]['genes']
-
-    kegg_count_dict = {}
-    delta_prevalence = []
-    pathway_annotation_dict = {}
-    genes = []
-    for gene in gene_dict.keys():
-
-        kegg_id = gene_dict[gene]['kegg_id']
-
-
-        if kegg_id == [['', '']]:
-            continue
-
-        delta_prevalence.append(gene_dict[gene]['delta_prevalence'])
-        genes.append(gene)
-
-        kegg_count_dict[gene] = {}
-
-        for k in kegg_id:
-            #if k == ['', '']:
-            if k == [['', '']]:
-                continue
-            pathway = k[0]
-            annotation = k[1]
-
-            if pathway not in pathway_annotation_dict:
-                pathway_annotation_dict[pathway] = annotation
-
-                kegg_count_dict[gene][pathway] = 1
-
-            kegg_count_dict[gene]['delta_prevalence'] = gene_dict[gene]['delta_prevalence']
-
-
-
-    return genes, delta_prevalence, kegg_count_dict, pathway_annotation_dict
-
-
-def calculate_r_squared(true_prev, predicted_prev):
-    mean_y = numpy.mean(predicted_delta_prev_plot)
-    tss = 0
-    for y in predicted_prev:
-        tss += (y - mean_y)**2
-    rss = 0
-    for i in range(len(true_prev)):
-        rss += (true_prev[i] - predicted_prev[i])**2
-    r_squared = (tss-rss)/tss
-    return r_squared
-
-
-all_species_names = load_predicted_prevalence_subsample_dict(want_names=True)
+all_species_names = gene_prev_utils.load_predicted_prevalence_subsample_dict(want_names=True)
 important_kegg_ids = []
 nonzero_slope_values = []
 important_gene_dict = {}
@@ -100,7 +33,7 @@ predicted_delta_prev = []
 #run model for all species separately, and compile results in 1 plot
 for species in all_species_names:
     #load data
-    new_genes, new_delta_prevalence, new_kegg_count_dict, new_pathway_annotation_dict = get_kegg_matrix(species)
+    new_genes, new_delta_prevalence, new_kegg_count_dict, new_pathway_annotation_dict = gene_prev_utils.get_kegg_matrix(species)
     #accumulate the dictionaries and other outputs between species to have cummulative lists
     pathway_annotation_dict.update(new_pathway_annotation_dict) 
     kegg_count_dict.update(new_kegg_count_dict)
@@ -187,7 +120,7 @@ plt.ylim(min(delta_prevalence)-0.01,max(delta_prevalence)+0.01)
 plt.xlabel('Observed ' + r'$\Delta p$')
 plt.ylabel('Predicted ' + r'$\Delta p$')
 plt.title(r'$\Delta p$' + ' ~ Kegg IDs, Composite Lasso Regression for 8 Prevalent Species', fontdict = {'fontsize' : 10})
-r_squared = round(calculate_r_squared(true_delta_prev_plot, predicted_delta_prev_plot), 3)
+r_squared = round(gene_prev_utils.calculate_r_squared(true_delta_prev_plot, predicted_delta_prev_plot), 3)
 plt.text(-0.02,-0.05, r'$R^{2}=$' + str(r_squared))
 plt.legend()
 #plt.savefig('C:/Users/sarah/Garud Lab/plots/lasso_regression.png', dpi=600)
@@ -293,10 +226,10 @@ plt.ylim(min(delta_prevalence)-0.01,max(delta_prevalence)+0.01)
 plt.xlabel('Observed ' + r'$\Delta p$')
 plt.ylabel('Predicted ' + r'$\Delta p$')
 plt.title(r'$\Delta p$' + ' ~ Kegg IDs, Combined Lasso Regression for 8 Prevalent Species', fontdict = {'fontsize' : 10})
-r_squared = round(calculate_r_squared(true_delta_prev_plot, predicted_delta_prev_plot), 3)
+r_squared = round(gene_prev_utils.calculate_r_squared(true_delta_prev_plot, predicted_delta_prev_plot), 3)
 plt.text(-0.02,-0.05, r'$R^{2}=$' + str(r_squared))
 plt.legend()
-#plt.savefig('C:/Users/sarah/Garud Lab/plots/lasso_regression_combined.png', dpi=600)
+plt.savefig('C:/Users/sarah/Garud Lab/plots/lasso_regression_combined.png', dpi=600)
 
 #drop non-zero coefficients with values less than 1e-15
 function_names_plot = []
@@ -313,7 +246,7 @@ plt.figure(4)
 plt.bar(range(len(function_names_plot)),function_coef_plot)
 plt.xticks(range(len(function_names_plot)), function_names_plot, rotation='vertical')
 plt.title("Significant Functions for predicting Delta Prevalence")
-#plt.savefig('C:/Users/sarah/Garud Lab/plots/function_coef_combined.png', dpi=600, bbox_inches='tight')
+plt.savefig('C:/Users/sarah/Garud Lab/plots/function_coef_combined.png', dpi=600, bbox_inches='tight')
 
 
 
